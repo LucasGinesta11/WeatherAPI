@@ -1,7 +1,5 @@
 package com.lucas.weatherapi.data.model
 
-import java.time.LocalTime
-
 data class WeatherResponse(
     val location: Location,
     val current: Current,
@@ -19,7 +17,8 @@ data class Location(
 data class Current(
     val last_updated: String,
     val temp_c: Float,
-    val temp_f: Float
+    val temp_f: Float,
+    val condition: Condition
 )
 
 data class Forecast(
@@ -27,6 +26,7 @@ data class Forecast(
 )
 
 data class ForecastDay(
+    val date: String,
     val day: Day
 )
 
@@ -35,4 +35,9 @@ data class Day(
     val mintemp_c: Float,
     val maxtemp_f: Float,
     val mintemp_f: Float
+)
+
+data class Condition(
+    val text: String,
+    val icon: String
 )

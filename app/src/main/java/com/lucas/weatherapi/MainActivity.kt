@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
         weatherViewModel.getWeatherForecast(
             apiKey = "077486a2e1f44c3185c72052250905",
-            location = "Madrid",
+            location = "Rob",
             days = 3
         )
         enableEdgeToEdge()
