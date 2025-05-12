@@ -9,9 +9,10 @@ interface WeatherAPI {
     @GET("forecast.json")
     // Metodo para obtener los datos esperados de la API
     suspend fun getForecast(
-        @Query("key") apiKey:String,
-        @Query("q") location:String,
-        @Query("days") days:Int = 3
-        // Alertas de aire...??
+        @Query("key") apiKey: String,
+        @Query("q") location: String,
+        @Query("days") days: Int = 8,
+        @Query("aqi") aqi: String = "no",
+        @Query("alerts") alerts: String = "no"
     ): WeatherResponse
 }

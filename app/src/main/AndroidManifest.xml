@@ -16,6 +16,7 @@
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="landscape"
             android:exported="true"
             android:theme="@style/Theme.TiempoAPI">
             <intent-filter>

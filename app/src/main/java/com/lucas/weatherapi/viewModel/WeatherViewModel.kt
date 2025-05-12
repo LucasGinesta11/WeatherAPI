@@ -1,5 +1,6 @@
 package com.lucas.weatherapi.viewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,15 +10,12 @@ import com.lucas.weatherapi.data.retrofit.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class WeatherViewModel: ViewModel() {
-    // LiveData para almacenar el estado de la UI
+    // LiveData para almacenar el estado de la UI, y puedan ser cambiados los datos
     private val _weatherData = MutableLiveData<WeatherResponse>()
     val weatherData: LiveData<WeatherResponse?> get() = _weatherData
 
-//    private val _error = MutableLiveData<String?>()
-//    val error: LiveData<String?> get() = _error
-
     // Obtener el pronostico del tiempo
-    fun getWeatherForecast(apiKey: String, location: String, days: Int = 3){
+    fun getWeatherForecast(apiKey: String, location: String, days: Int = 8){
         // Llamada a api desde corrutina
         viewModelScope.launch {
             try {
@@ -25,15 +23,9 @@ class WeatherViewModel: ViewModel() {
 
                 // Actualizar LiveData
                 _weatherData.postValue(response)
-//                _error.postValue(null)
             }
             catch (e: Exception){
                 e.printStackTrace()
-//                _error.postValue("Error en la solicitud: ${e.message}")
-            }
-            catch (e: Exception){
-                e.printStackTrace()
-//                _error.postValue("Error desconocido: ${e.message}")
             }
         }
     }

@@ -15,15 +15,10 @@ class MainActivity : ComponentActivity() {
         // Inicializa ViewModel
         weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
 
-        // Observa los cambios
-        weatherViewModel.weatherData.observe(this) { weatherResponse ->
-            // Actualizar datos
-        }
-
         weatherViewModel.getWeatherForecast(
             apiKey = "077486a2e1f44c3185c72052250905",
-            location = "Rob",
-            days = 3
+            location = "Madrid",
+            days = 8
         )
         enableEdgeToEdge()
         setContent {

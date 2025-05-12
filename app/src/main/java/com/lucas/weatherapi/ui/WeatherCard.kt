@@ -1,6 +1,5 @@
 package com.lucas.weatherapi.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,40 +9,70 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.lucas.weatherapi.viewModel.WeatherViewModel
+import coil.compose.AsyncImage
+import com.lucas.weatherapi.data.model.ForecastDay
 
 @Composable
-fun WeatherCard(viewModel: WeatherViewModel){
+fun WeatherCard(
+    forecastday: ForecastDay,
+    temperature: Boolean,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val cardColor = if (isSelected) Color.LightGray else Color.White
 
-    val weatherData = viewModel.weatherData.observeAsState().value
-    Card (onClick = {}, modifier = Modifier.height(150.dp).width(120.dp)){
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("${weatherData?.forecast?.forecast_day?.get(0)?.date}")
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .height(130.dp)
+            .fillMaxWidth()
+            .padding(4.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(obtenerDia(forecastday.date))
 
             Spacer(modifier = Modifier.padding(8.dp))
 
-//            Image()
-            Text("Imagen")
+            AsyncImage(
+                model = "https:${forecastday.day.condition.icon}",
+                contentDescription = "Icono del clima",
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+            )
 
             Spacer(modifier = Modifier.padding(8.dp))
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${weatherData?.forecast?.forecast_day?.get(0)?.day?.maxtemp_c}")
-                Text("${weatherData?.forecast?.forecast_day?.get(0)?.day?.mintemp_c}")
+                Text(
+                    if (temperature) {
+                        "${forecastday.day.maxtemp_c}º"
+                    } else {
+                        "${forecastday.day.maxtemp_f}º"
+                    }
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    if (temperature) {
+                        "${forecastday.day.mintemp_c}º"
+                    } else {
+                        "${forecastday.day.mintemp_f}º"
+                    }
+                )
             }
         }
     }
 }
-
-//@Composable
-//@Preview
-//fun Preview(viewModel: WeatherViewModel){
-//    WeatherCard(viewModel)
-//}
