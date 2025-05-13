@@ -8,9 +8,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/weather"
+        android:icon="@drawable/icono"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/weather"
+        android:roundIcon="@drawable/icono"
         android:supportsRtl="true"
         android:theme="@style/Theme.TiempoAPI"
         tools:targetApi="31">
@@ -18,7 +18,8 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape"
             android:exported="true"
-            android:theme="@style/Theme.TiempoAPI">
+            android:theme="@style/Theme.TiempoAPI"
+            tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

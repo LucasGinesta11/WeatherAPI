@@ -16,9 +16,10 @@ class MainActivity : ComponentActivity() {
         weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
 
         weatherViewModel.getWeatherForecast(
-            apiKey = "077486a2e1f44c3185c72052250905",
-            location = "Madrid",
-            days = 8
+            city = "Burriana",
+            days = 5,
+            apiKey = "3cd8b92528154d97ac76b917d315cf81"
+
         )
         enableEdgeToEdge()
         setContent {

@@ -6,13 +6,11 @@ import retrofit2.http.Query
 
 interface WeatherAPI {
     // Recurso que queremos consultar
-    @GET("forecast.json")
+    @GET("forecast/daily")
     // Metodo para obtener los datos esperados de la API
     suspend fun getForecast(
+        @Query("city") city: String,
+        @Query("days") days: Int = 5,
         @Query("key") apiKey: String,
-        @Query("q") location: String,
-        @Query("days") days: Int = 8,
-        @Query("aqi") aqi: String = "no",
-        @Query("alerts") alerts: String = "no"
     ): WeatherResponse
 }
