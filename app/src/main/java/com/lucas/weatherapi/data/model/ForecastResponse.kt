@@ -1,6 +1,6 @@
 package com.lucas.weatherapi.data.model
 
-data class WeatherResponse(
+data class ForecastResponse(
     val city_name: String,
     val country_code: String,
     val lat: Float,
@@ -16,12 +16,21 @@ data class ForecastDay(
     val temp: Float,
     val sunrise_ts: Long,
     val sunset_ts: Long,
+    val moonrise_ts: Long,
+    val moonset_ts: Long,
     val wind_spd: Float,
-    val wind_dir: Int,
     val rh: Int,
     val pop: Int,
     val weather: Condition,
-    val clouds: Int
+    val clouds: Int,
+    val snow: Float,
+    val uv: Int,
+    val vis: Float,
+    val pres: Float,
+    val wind_dir: Int,
+    val wind_cdir: String,
+    val precip: Float,
+    val ts: Long
 )
 
 data class Condition(

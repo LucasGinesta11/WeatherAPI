@@ -1,5 +1,7 @@
 package com.lucas.weatherapi.ui
 
+import android.annotation.SuppressLint
+import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.lucas.weatherapi.R
+import com.lucas.weatherapi.data.model.CurrentDay
 import com.lucas.weatherapi.data.model.ForecastDay
 import java.time.Instant
 import java.time.LocalDate
@@ -31,14 +34,19 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun WeatherCard(forecastday: ForecastDay) {
+fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -> Unit) {
+
+    val isToday = LocalDate.parse(forecastday.valid_date) == LocalDate.now()
+
     Card(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .height(370.dp)
-            .width(170.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
+            .width(240.dp)
+            .padding(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFD6E6FB))
     ) {
         Column(
             modifier = Modifier
@@ -47,6 +55,12 @@ fun WeatherCard(forecastday: ForecastDay) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(getDay(forecastday.valid_date), fontSize = 20.sp)
+
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            if(isToday){
+                Text("${currentDay?.temp}º", fontSize = 20.sp)
+            }
 
             Spacer(modifier = Modifier.padding(8.dp))
 
@@ -58,7 +72,7 @@ fun WeatherCard(forecastday: ForecastDay) {
                     .height(50.dp)
             )
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             Text(
                 forecastday.weather.description,
@@ -66,42 +80,142 @@ fun WeatherCard(forecastday: ForecastDay) {
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text("${forecastday.max_temp}º", color = Color.Red)
+                Text("${forecastday.max_temp}º", color = Color.Red, fontSize = 15.sp)
 
                 Spacer(modifier = Modifier.padding(10.dp))
 
-                Text("${forecastday.min_temp}º", color = Color.Blue)
+                Text("${forecastday.min_temp}º", color = Color.Blue, fontSize = 15.sp)
             }
 
-            Spacer(Modifier.padding(top = 10.dp))
+            Spacer(Modifier.padding(top = 15.dp))
 
-            Column {
-                Row {
-                    Icon(
-                        painter = painterResource(id = R.drawable.prec),
-                        contentDescription = "",
-                        Modifier.width(25.dp).height(25.dp)
-                    )
-                    Text("${forecastday.pop}%")
+            Row {
+                Column(Modifier.padding(start = 7.dp)) {
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.prec),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text("${forecastday.pop}%", modifier = Modifier.padding(5.dp))
+                    }
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.hum),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text("${forecastday.rh}%", modifier = Modifier.padding(5.dp))
+                    }
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.total),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text(
+                            String.format("%.2f mm", forecastday.precip),
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.sunrise),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text(
+                            convertUnixToLocalTime(forecastday.sunrise_ts, "Europe/Madrid"),
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+
+//                    Row {
+//                        if (forecastday.snow > 0) {
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.nieve),
+//                                contentDescription = "",
+//                                Modifier
+//                                    .width(20.dp)
+//                                    .height(20.dp)
+//                            )
+//                            Text(String.format("%.2f mm", forecastday.precip), modifier = Modifier.padding(5.dp))
+//                        }
+//                    }
                 }
-                Text("Humidity: ${forecastday.rh}%", modifier = Modifier.padding(5.dp))
-                Text("Wind: ${forecastday.wind_spd} m/s", modifier = Modifier.padding(5.dp))
-                Text("Clouds: ${forecastday.clouds}%", modifier = Modifier.padding(5.dp))
-                Text(
-                    "Sunrise: ${convertUnixToLocalTime(forecastday.sunrise_ts, "Europe/Madrid")}",
-                    modifier = Modifier.padding(5.dp)
-                )
-                Text(
-                    "Sunset: ${convertUnixToLocalTime(forecastday.sunset_ts, "Europe/Madrid")}",
-                    modifier = Modifier.padding(5.dp)
-                )
 
+                Column(Modifier.padding(start = 10.dp)) {
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.vien),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text("${forecastday.wind_spd} m/s", modifier = Modifier.padding(5.dp))
+                    }
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.grados),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text(
+                            "${forecastday.wind_dir}º, ${forecastday.wind_cdir}",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.nieve),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text(
+                            String.format("%.2f mm", forecastday.snow),
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.sunset),
+                            contentDescription = "",
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                        Text(
+                            convertUnixToLocalTime(forecastday.sunset_ts, "Europe/Madrid"),
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -120,7 +234,8 @@ fun convertUnixToLocalTime(timestamp: Long?, zoneId: String): String {
 fun getDay(fecha: String?): String {
     return try {
         val date = LocalDate.parse(fecha)
-        date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("en", "GB"))
+        date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
+
     } catch (e: Exception) {
         "Fecha inválida"
         e.printStackTrace()

@@ -2,8 +2,10 @@ package com.lucas.weatherapi.ui
 
 import android.app.Activity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,6 +40,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lucas.weatherapi.viewModel.WeatherViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,15 +48,23 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
 
     val context = LocalContext.current
     // Valores para obtener los datos del viewModel al Model
-    val weatherData = viewModel.weatherData.observeAsState().value
+    val forecastData = viewModel.forecastData.observeAsState().value
+    val currentData = viewModel.currentData.observeAsState().value
     // Obtiene los datos de weatherData
-    val forecastList = weatherData?.data ?: emptyList()
+    val forecastList = forecastData?.data ?: emptyList()
+    val currentList = currentData?.data ?: emptyList()
+
+    // Card seleccionado
+    var selectedCardIndex by remember { mutableIntStateOf(0) }
+    val selectedForecastDay = forecastList.getOrNull(selectedCardIndex)
 
     // Logica del Search (iniciar buscador o iniciarlo vacio)
     var isSearchActive by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
 
-    val scrollState = rememberScrollState()
+    val languageCode = Locale.getDefault().language
+
+    val suggestions = viewModel.searchCities.observeAsState(emptyList()).value
 
     Scaffold(
         topBar = {
@@ -63,6 +75,13 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                             value = searchText,
                             onValueChange = {
                                 searchText = it
+                                if (it.text.isNotEmpty()) {
+                                    viewModel.searchCities(
+                                        it.text,
+                                        languageCode,
+                                        "3cd8b92528154d97ac76b917d315cf81"
+                                    )
+                                }
                             },
                             modifier = Modifier.fillMaxWidth(),
                             placeholder = { Text("Buscar...", color = Color.White) },
@@ -84,7 +103,13 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                         IconButton(onClick = {
                             viewModel.getWeatherForecast(
                                 searchText.text,
-                                5,
+                                languageCode,
+                                8,
+                                "3cd8b92528154d97ac76b917d315cf81"
+                            )
+                            viewModel.getWeatherCurrent(
+                                searchText.text,
+                                languageCode,
                                 "3cd8b92528154d97ac76b917d315cf81"
                             )
                             isSearchActive = false
@@ -126,20 +151,75 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                 }
             )
         }, content = { paddingValues ->
+
             Column(
                 Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
                     .background(Color.White)
                     .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
             ) {
 
-                Text(
-                    text = "${weatherData?.city_name}",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 25.dp, top = 20.dp)
-                )
+                if (suggestions.isNotEmpty() && isSearchActive) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.LightGray)
+                    ) {
+                        suggestions.forEach { (city, country) ->
+                            Text(
+                                text = "$city, $country",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                                    .background(Color.White)
+                                    .clickable {
+                                        searchText = TextFieldValue(city)
+                                        viewModel.getWeatherForecast(city, languageCode, 8, "3cd8b92528154d97ac76b917d315cf81")
+                                        viewModel.getWeatherCurrent(city, languageCode, "3cd8b92528154d97ac76b917d315cf81")
+                                        isSearchActive = false
+                                    }
+                            )
+                        }
+                    }
+                }
+
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "${forecastData?.city_name}, ${forecastData?.country_code}",
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 25.dp, top = 20.dp)
+                        )
+                        Text(
+                            text = currentList.firstOrNull()?.ob_time?.toString().toString(),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 25.dp)
+                        )
+                    }
+
+                    Column {
+                        Text(
+                            text = getDay(selectedForecastDay?.valid_date),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(end = 25.dp, top = 20.dp)
+                        )
+                        Text(
+                            text = "${selectedForecastDay?.valid_date}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(end = 25.dp)
+                        )
+                    }
+                }
+
 
                 LazyRow(
                     modifier = Modifier
@@ -149,7 +229,10 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                 ) {
                     itemsIndexed(forecastList) { index, forecastDay ->
                         WeatherCard(
-                            forecastday = forecastDay
+                            forecastday = forecastDay,
+                            currentDay = currentList.firstOrNull(),
+                            onClick = { selectedCardIndex = index }
+
                         )
                     }
                 }
@@ -157,3 +240,4 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
         }
     )
 }
+

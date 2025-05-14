@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
 import com.lucas.weatherapi.ui.WeatherScreen
 import com.lucas.weatherapi.viewModel.WeatherViewModel
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private lateinit var weatherViewModel: WeatherViewModel
@@ -15,12 +16,21 @@ class MainActivity : ComponentActivity() {
         // Inicializa ViewModel
         weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
 
+        val languageCode = Locale.getDefault().language
+
         weatherViewModel.getWeatherForecast(
             city = "Burriana",
-            days = 5,
+            lang = languageCode,
+            days = 8,
             apiKey = "3cd8b92528154d97ac76b917d315cf81"
-
         )
+
+        weatherViewModel.getWeatherCurrent(
+            city = "Burriana",
+            lang = languageCode,
+            apiKey = "3cd8b92528154d97ac76b917d315cf81"
+        )
+
         enableEdgeToEdge()
         setContent {
             WeatherScreen(viewModel = weatherViewModel)
