@@ -1,7 +1,6 @@
 package com.lucas.weatherapi.ui
 
 import android.annotation.SuppressLint
-import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,6 +59,9 @@ fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -
 
             if(isToday){
                 Text("${currentDay?.temp}º", fontSize = 20.sp)
+            }else{
+                // Espacio para compensar la temp actual
+                Spacer(Modifier.padding(12.dp))
             }
 
             Spacer(modifier = Modifier.padding(8.dp))
@@ -96,7 +98,7 @@ fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -
             Spacer(Modifier.padding(top = 15.dp))
 
             Row {
-                Column(Modifier.padding(start = 7.dp)) {
+                Column(Modifier.padding(start = 4.dp)) {
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.prec),
@@ -161,7 +163,7 @@ fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -
 //                    }
                 }
 
-                Column(Modifier.padding(start = 10.dp)) {
+                Column(Modifier.padding(start = 8.dp)) {
 
                     Row {
                         Icon(
@@ -237,7 +239,6 @@ fun getDay(fecha: String?): String {
         date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
 
     } catch (e: Exception) {
-        "Fecha inválida"
         e.printStackTrace()
     }.toString()
 }
