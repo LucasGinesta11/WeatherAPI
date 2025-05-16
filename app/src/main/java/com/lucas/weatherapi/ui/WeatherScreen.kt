@@ -26,6 +26,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -64,6 +65,10 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
 
     val languageCode = Locale.getDefault().language
 
+    LaunchedEffect(Unit) {
+        viewModel.loadCities(context)
+    }
+
     val suggestions = viewModel.searchCities.observeAsState(emptyList()).value
 
     Scaffold(
@@ -76,11 +81,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                             onValueChange = {
                                 searchText = it
                                 if (it.text.isNotEmpty()) {
-                                    viewModel.searchCities(
-                                        it.text,
-                                        languageCode,
-                                        "3cd8b92528154d97ac76b917d315cf81"
-                                    )
+                                    viewModel.searchCities(it.text)
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -160,6 +161,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                     .verticalScroll(rememberScrollState())
             ) {
 
+
                 if (suggestions.isNotEmpty() && isSearchActive) {
                     Column(
                         modifier = Modifier
@@ -175,8 +177,17 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                                     .background(Color.White)
                                     .clickable {
                                         searchText = TextFieldValue(city)
-                                        viewModel.getWeatherForecast(city, languageCode, 8, "3cd8b92528154d97ac76b917d315cf81")
-                                        viewModel.getWeatherCurrent(city, languageCode, "3cd8b92528154d97ac76b917d315cf81")
+                                        viewModel.getWeatherForecast(
+                                            city,
+                                            languageCode,
+                                            8,
+                                            "3cd8b92528154d97ac76b917d315cf81"
+                                        )
+                                        viewModel.getWeatherCurrent(
+                                            city,
+                                            languageCode,
+                                            "3cd8b92528154d97ac76b917d315cf81"
+                                        )
                                         isSearchActive = false
                                     }
                             )
@@ -219,7 +230,6 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                         )
                     }
                 }
-
 
                 LazyRow(
                     modifier = Modifier
