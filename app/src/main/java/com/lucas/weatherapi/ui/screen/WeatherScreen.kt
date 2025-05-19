@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.lucas.weatherapi.data.retrofit.RetrofitInstance
 import com.lucas.weatherapi.ui.composable.WeatherCard
 import com.lucas.weatherapi.ui.composable.getDay
+import com.lucas.weatherapi.ui.theme.colorSuggestion
 import com.lucas.weatherapi.ui.viewModel.WeatherViewModel
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -258,7 +259,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                                                 .fillMaxWidth()
                                                 .padding(vertical = 4.dp, horizontal = 8.dp)
                                                 .background(
-                                                    color = Color(0xFFEFEFEF),
+                                                    color = colorSuggestion,
                                                     shape = RoundedCornerShape(8.dp)
                                                 )
                                                 .clickable {
