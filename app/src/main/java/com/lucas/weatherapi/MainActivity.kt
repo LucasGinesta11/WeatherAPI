@@ -5,8 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
-import com.lucas.weatherapi.ui.WeatherScreen
-import com.lucas.weatherapi.viewModel.WeatherViewModel
+import androidx.lifecycle.lifecycleScope
+import com.lucas.weatherapi.data.retrofit.RetrofitInstance
+import com.lucas.weatherapi.ui.screen.WeatherScreen
+import com.lucas.weatherapi.ui.viewModel.WeatherViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -18,18 +23,23 @@ class MainActivity : ComponentActivity() {
 
         val languageCode = Locale.getDefault().language
 
-        weatherViewModel.getWeatherForecast(
-            city = "Burriana",
-            lang = languageCode,
-            days = 8,
-            apiKey = "3cd8b92528154d97ac76b917d315cf81"
-        )
+        lifecycleScope.launch(Dispatchers.IO) {
 
-        weatherViewModel.getWeatherCurrent(
-            city = "Burriana",
-            lang = languageCode,
-            apiKey = "3cd8b92528154d97ac76b917d315cf81"
-        )
+            val a = async {
+                weatherViewModel.getWeatherForecast(
+                    city = RetrofitInstance.city,
+                    lang = languageCode,
+                    days = RetrofitInstance.days,
+                    apiKey = RetrofitInstance.API_KEY
+                )
+
+                weatherViewModel.getWeatherCurrent(
+                    city = RetrofitInstance.city,
+                    lang = languageCode,
+                    apiKey = RetrofitInstance.API_KEY
+                )
+            }
+        }
 
         enableEdgeToEdge()
         setContent {
