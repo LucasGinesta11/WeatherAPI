@@ -261,7 +261,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                 }
 
                 Text(
-                    text = "Ultima actualizacion: "+currentList.firstOrNull()?.ob_time.toString(),
+                    text = "Ultima actualizacion: " + currentList.firstOrNull()?.ob_time.toString(),
                     fontSize = 15.sp,
                     modifier = Modifier
                         .padding(8.dp)

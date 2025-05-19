@@ -168,7 +168,7 @@ fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.vien),
-                            contentDescription = "",
+                            contentDescription = "Velocidad del viento",
                             Modifier
                                 .width(20.dp)
                                 .height(20.dp)
@@ -179,7 +179,7 @@ fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.grados),
-                            contentDescription = "",
+                            contentDescription = "Direccion del viento",
                             Modifier
                                 .width(20.dp)
                                 .height(20.dp)
@@ -193,7 +193,7 @@ fun WeatherCard(forecastday: ForecastDay, currentDay: CurrentDay?, onClick: () -
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.nieve),
-                            contentDescription = "",
+                            contentDescription = "Cantidad de nieve",
                             Modifier
                                 .width(20.dp)
                                 .height(20.dp)
